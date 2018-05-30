@@ -1,0 +1,430 @@
+---
+title: "Forestplot Tutorial"
+subtitle: "Visualizations for Epidemiological Analysis"
+author: | 
+  | Maria Kalimeri, maria.kalimeri@nightingalehealth.com, Nightingale Health Ltd.
+  | Qin Wang, qin.wang@computationalmedicine.fi, Computational Medicine, Faculty of Medicine, University of Oulu
+date: "Mar. 24, 2018"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  html_notebook: default
+  fig_width: 6 
+  fig_height: 4 
+---
+
+---
+```{r setup, include=FALSE}
+# This is needed to wrap the code for the pdf
+rm(list=ls.str())
+library(knitr)
+library(survival)
+library(forestplot)
+opts_chunk$set(tidy.opts=list(width.cutoff=50),tidy=TRUE)
+```
+
+# Installation instructions 
+Forestplot is an under-development R package to plot associations of diseases and phenotypes in the form a forest plot (a.k.a. blobbogram). Specifically, it offers built-in naming and grouping features to assist visualizations of epidimiological analysis with NMR metabolomics quantified biomarkers (see section "Overview of NMR data"). The associations may be linear (linear regression), odds ratios (logistic regression) or hazard ratios (e.g. Cox Proportional hazards).
+
+To install, first open an R session in the parent directory of the `forestplot/` folder. You will need the package `devtools`, if not already installed, install it by typing:
+
+```{r, eval=FALSE}
+# Install
+install.packages("devtools")
+```
+
+Then install and load `forestplot` by typing:
+
+```{r, eval=FALSE}
+# (Make sure you are in the parent directory of forestplot)
+# Install 
+devtools::install(pkg = "forestplot")
+# Load in session
+library(forestplot)
+```
+
+Hopefully, dependencies will be installed automatically. If not let me know. (See also pdf manual for list of dependencies.)
+
+# Overview of NMR data
+The biomarker concentration data are often available in both tsv and xlsx formats. R can read both but in this tutorial we will focus on tsv format. We will be using the collection of the `tidyverse` packages which you need to have installed. Naturally, the previous step installed also `tidyverse` since it is a dependency for `forestplot`. If `tidyverse` is not installed, install it by typing `>install.packages("tidyverse")` and then load it by typing `>library(tidyverse)`.
+
+Below, we load two example tsv files in R and view the available biomarkers (the files can be found in the `demos` folder):
+
+```{r, tidy=F}
+# Read the biomarker concentration file
+metabol_data_1 <- read_tsv(file = "example_nmr_1.tsv",
+                     na = c("NA", "NDEF", "TAG"),
+                     col_types = cols(.default = col_double(), sampleid = col_character()))
+metabol_data_2 <- read_tsv(file = "example_nmr_2.tsv",
+                     na = c("NA", "NDEF", "TAG"),
+                     col_types = cols(.default = col_double(), sampleid = col_character()))
+class(metabol_data_1)
+print(head(metabol_data_1))
+```
+
+Print and inspect all the biomarker abbreviations 
+
+```{r, tidy=F}
+print(names(metabol_data_1))
+# You may also see their full names by printing the built-in dataset 
+head(forestplot::biomarkers)
+```
+
+# Data analysis and visualization
+
+## Linear regression
+
+We will now read the phenotype data that correspond to the blood biomarker data and join nmr with phenotype datasets. 
+
+```{r, tidy=F}
+# Read the biomarker concentration file
+pheno_data_1 <- read_tsv(file = "example_pheno_1.tsv", 
+                       col_types = cols(.default = col_double(), 
+                                        sampleid = col_character(), 
+                                        VMALE=col_factor(levels = c(0,1))))
+pheno_data_2 <- read_tsv(file = "example_pheno_2.tsv", 
+                       col_types = cols(.default = col_double(), 
+                                        sampleid = col_character(), 
+                                        VMALE=col_factor(levels = c(0,1))))
+metabol_n_pheno_1 <- left_join(x = metabol_data_1, 
+                             y = pheno_data_1, 
+                             by = "sampleid")
+metabol_n_pheno_2 <- left_join(x = metabol_data_2, 
+                             y = pheno_data_2, 
+                             by = "sampleid")
+```
+
+
+We will now look at the association of BMI with each metabolite via linear regression:
+
+\begin{align*}
+y = \beta * x + \alpha
+\end{align*}
+
+Where metabolite is the outcome , $y$, and BMI is the exposure $x$. The association of $x$ with $y$ refers to the beta coefficient ($\beta$).
+
+
+```{r, message=F, tidy=F}
+# We will use the built-in dataframe `biomarkers`, which contains all possible
+# biomarkers of the NMR platform under discussion. (The dataframe contains 
+# standard abbreviation, spelled-out name and forestplot display name and one 
+# suggestive categorization of the biomarkers.)
+
+# The biomarkers we will estimate the associations for are the intersection 
+# between the column biomarkers$abbrev and the column names of the metabol_n_pheno 
+# and the column 
+bmrs <- 
+  biomarkers$abbrev %>%
+  intersect(., colnames(metabol_n_pheno_1)) %>%
+  intersect(., colnames(metabol_n_pheno_2))
+
+# No of bmr
+nobmr <- length(bmrs)
+```
+
+
+```{r, message=F, tidy=F}
+# FIRST COHORT ANALYSIS 
+# Log transform the metabolites 
+metabol_n_pheno_1[,bmrs] <- 
+  metabol_n_pheno_1[,bmrs] %>% 
+  apply(2, log1p)
+
+# Initialize data_frames that will store beta, SE and p-values
+beta_cohort1 <- 
+  se_cohort1 <- 
+  pval_cohort1 <- 
+  data_frame(abbrev=character(nobmr), 
+             BMI=double(nobmr))
+
+## Sex- and age-adjusted associations of cohort to BMI
+cohort1 <- 
+  metabol_n_pheno_1 %>%
+  gather(., 
+         key = bmr, 
+         value = bmr_value, 
+         bmrs) %>%
+  split(.$bmr) %>% 
+  map(~ lm(scale(bmr_value)  ~ BMI+VMALE+AGE, data = .)) %>%
+  map(summary) %>%
+  map("coefficients") 
+
+# Assign values to beta, se and pval dataframe
+beta_cohort1$BMI <-
+  cohort1 %>%
+  sapply(., function(x) x["BMI","Estimate"])
+beta_cohort1$abbrev <- 
+  cohort1 %>%
+  names
+
+se_cohort1$BMI <-
+  cohort1 %>%
+  sapply(., function(x) x["BMI","Std. Error"])
+se_cohort1$abbrev <- 
+  cohort1 %>%
+  names
+
+pval_cohort1$BMI <-
+  cohort1 %>%
+  sapply(., function(x) x["BMI","Pr(>|t|)"])
+pval_cohort1$abbrev <- 
+  cohort1 %>%
+  names
+```
+
+
+```{r, message=F, tidy=F}
+# SECOND COHORT ANALYSIS 
+# Log transform the metabolites 
+metabol_n_pheno_2[,bmrs] <- 
+  metabol_n_pheno_2[,bmrs] %>% 
+  apply(2, log1p)
+
+# Initialize data_frames that will store beta, SE and p-values
+beta_cohort2 <- 
+  se_cohort2 <- 
+  pval_cohort2 <- 
+  data_frame(abbrev=character(nobmr), 
+             BMI=double(nobmr))
+
+## Sex- and age-adjusted associations of cohort to BMI
+cohort2 <- 
+  metabol_n_pheno_2 %>%
+  gather(., 
+         key = bmr, 
+         value = bmr_value, 
+         bmrs) %>%
+  split(.$bmr) %>% 
+  map(~ lm(scale(bmr_value)  ~ BMI+VMALE+AGE, data = .)) %>%
+  map(summary) %>%
+  map("coefficients") 
+
+# Assign values to beta, se and pval dataframe
+beta_cohort2$BMI <-
+  cohort2 %>%
+  sapply(., function(x) x["BMI","Estimate"])
+beta_cohort2$abbrev <- 
+  cohort2 %>%
+  names
+
+se_cohort2$BMI <-
+  cohort2 %>%
+  sapply(., function(x) x["BMI","Std. Error"])
+se_cohort2$abbrev <- 
+  cohort2 %>%
+  names
+
+pval_cohort2$BMI <-
+  cohort2 %>%
+  sapply(., function(x) x["BMI","Pr(>|t|)"])
+pval_cohort2$abbrev <- 
+  cohort2 %>%
+  names
+```
+
+### Forest plotting (linear)
+Let's now attempt to plot all the biomarkers with the forestplot function. 
+
+```{r, message=F, tidy=F}
+# We first merge the betas, se and pval dataframes
+beta <- full_join(x = beta_cohort1,
+                  y = beta_cohort2, 
+                  by = "abbrev")
+
+se <- full_join(x = se_cohort1,
+                y = se_cohort2, 
+                by = "abbrev")
+
+pval <- full_join(x = pval_cohort1,
+                  y = pval_cohort2, 
+                  by = "abbrev")
+
+names(beta) <-
+  names(se) <- 
+  names(pval) <-
+  c("abbrev", "cohort1", "cohort2")
+
+# Create a grouping (in this case we just use one of the built in options)
+# Function bmr_selected_grouping() takes one argument "bmr_grouping_choice",
+# which must be one of the following four strings: "onepage_forestplot",
+# "serum_all", "edta_plasma_all", "short"). 
+bmr_all_grouped <- bmr_selected_grouping(bmr_grouping_choice = "serum_all")
+
+forestplot(beta=beta,
+           se=se,
+           pval=pval,
+           biomarker_groups_as_list=bmr_all_grouped,
+           filename='plot_linear_comparison.pdf',
+           plot_title="Linear associations to BMI",
+           is_log_odds_ratio=F,
+           xlabel="SD difference (95% CI)",
+           signif_cutoff=0.05,
+           legend_vars=names(beta)[2:3],
+           height = 12, 
+           width = 9)
+```
+
+Notice that when only one cohort (or study) is plotted, the beta values are displayed 
+on the right y-axis. For one-study plots the default color is black, but this is customizable, see `?forestplot` option `plotcolors`. 
+
+Notice also below that we are free to input other parameter specifications that will be fed into the `pdf` device used for the plot. In this case below I use "a4", which I highly recommend for the cases where all biomarkers are plotted. 
+
+```{r, message=F, tidy=F}
+forestplot(beta=beta[,1:2],
+           se=se[,1:2],
+           pval=pval[,1:2],
+           biomarker_groups_as_list=bmr_all_grouped,
+           filename='plot_linear_cohort1.pdf',
+           plot_title="Linear associations to BMI",
+           is_log_odds_ratio=F,
+           xlabel="SD difference (95% CI)",
+           signif_cutoff=0.05,
+           paper="a4",
+           height = 12, 
+           width = 9)
+```
+
+Let's now plot a smalled group of biomarkers and see how we can customize the looks of the output. We can build our own grouping but we will start by using the existing example in `bmr_selected_grouping()` function.
+
+```{r, message=F, tidy=F}
+# A grouping with smaller number of biomarkers
+bmr_all_grouped <- bmr_selected_grouping(bmr_grouping_choice = "example_short")
+ 
+forestplot(beta=beta,
+           se=se,
+           pval=pval,
+           biomarker_groups_as_list=bmr_all_grouped,
+           filename='plot_linear_cohort1_short.pdf',
+           plot_title="Linear associations to BMI",
+           is_log_odds_ratio=F,
+           xlabel="SD difference (95% CI)",
+           signif_cutoff=0.05,
+           legend_vars=names(beta)[2:3],
+           paper="a4",
+           height = 12, 
+           width = 9)
+```
+
+If you inspect the last pdf file, you'll notice that the layout needs some further customizing. Let's start by moving the y-axis labels closer to the 
+
+## Logistic regression
+
+We will perform a logistic regression with a dummy event in order to plot also with the 
+`is_log_odds_ratio` flag on.
+
+```{r, message=F, tidy=F}
+# Create a random event
+metabol_n_pheno_1 <-
+  metabol_n_pheno_1 %>%
+  mutate(., event=BMI>30)
+
+# Initialize data_frames that will store beta, SE and p-values
+beta_cohort1 <- 
+  se_cohort1 <- 
+  pval_cohort1 <- 
+  data_frame(abbrev=character(nobmr), 
+             event=double(nobmr))
+
+## Sex- and age-adjusted associations of cohort to event
+cohort1 <- 
+  metabol_n_pheno_1 %>%
+  gather(., 
+         key = bmr, 
+         value = bmr_value, 
+         bmrs) %>%
+  split(.$bmr) %>% 
+  map(~ glm(event ~ scale(bmr_value) + VMALE+AGE, data = ., family = "binomial")) %>%
+  map(summary) %>%
+  map("coefficients") 
+
+# Assign values to beta, se and pval dataframe
+beta_cohort1$event <-
+  cohort1 %>%
+  sapply(., function(x) x["scale(bmr_value)","Estimate"])
+beta_cohort1$abbrev <- 
+  cohort1 %>%
+  names
+
+se_cohort1$event <-
+  cohort1 %>%
+  sapply(., function(x) x["scale(bmr_value)","Std. Error"])
+se_cohort1$abbrev <- 
+  cohort1 %>%
+  names
+
+pval_cohort1$event <-
+  cohort1 %>%
+  sapply(., function(x) x["scale(bmr_value)","Pr(>|z|)"])
+pval_cohort1$abbrev <- 
+  cohort1 %>%
+  names
+```
+
+### Forest plotting (logarithmic)
+
+```{r, message=F, tidy=F}
+# We first merge the betas, se and pval dataframes
+beta <- beta_cohort1
+se <- se_cohort1
+pval <- pval_cohort1
+
+names(beta) <-
+  names(se) <- 
+  names(pval) <-
+  c("abbrev", "event")
+
+# Create a grouping (in this case we just use one of the built in options)
+# Function bmr_selected_grouping() takes one argument "bmr_grouping_choice",
+# which must be one of the following four strings: "onepage_forestplot",
+# "serum_all", "edta_plasma_all", "short"). 
+bmr_all_grouped <- bmr_selected_grouping(bmr_grouping_choice = "serum_all")
+
+forestplot(beta=beta,
+           se=se,
+           pval=pval,
+           biomarker_groups_as_list=bmr_all_grouped,
+           filename='plot_logistic_cohort1.pdf',
+           plot_title="Odds ratios",
+           is_log_odds_ratio=T,
+           xlabel="SD-scaled odds ratios (95% CI)",
+           signif_cutoff=0.05,
+           plotpointshape = 23,
+           legend_vars=names(beta)[2],
+           paper="a4",
+           height = 12, 
+           width = 9)
+```
+
+Below there is also an example with a small grouping that is built from scratch by the user. Here we will also make use of the `indices` parameter, a list of numeric vectors, that has either 1, 2 or 4 components corresponding to 1, 2 or 4 columns respectively and each containing the indices of the `biomarker_groups_as_list` to be plotted in each column.
+
+```{r}
+# A grouping with smaller number of biomarkers
+metabo_groups_custom <- list("Branched-chain amino acids"=c("Ile", "Leu", "Val"),
+                          "Aromatic amino acids"=c("Phe", "Tyr", "His"),
+                          "Other amino acids"=c("Ala", "Gly", "Gln", NA),
+                          "Glycolysis-related metabolites"=c("Lac", "Pyr", "Glol"),
+                          "Ketone bodies"=c("AcAce", "bOHBut"),
+                          "Inflammation"=c("Gp"),
+                          "Miscellaneous"=c("Crea", "Alb", "Ace", "Cit", NA),
+                          "Fatty acid ratios"=c("TotFA", "SFA/FA","MUFA/FA","PUFA/FA",
+                                          "FAw6/FA","LA/FA","FAw3/FA","DHA/FA","UnSat"),
+                          "Phospholipids"=c("SM", "TotCho", "PC", "TotPG", "TG/PG"))
+
+
+
+forestplot(beta=beta,
+           se=se,
+           pval=pval,
+           biomarker_groups_as_list=metabo_groups_custom,
+           indices=list(c(1:22), c(23:44)),
+           filename='plot_logistic_cohort1_small.pdf',
+           plot_title="Odds ratios",
+           is_log_odds_ratio=T,
+           xlabel="SD-scaled odds ratios (95% CI)",
+           signif_cutoff=0.05,
+           width=10,
+           height=5)
+```
+
+So for example, in the `indices` parameter, indices 1 to 4 correspond to "Branched-chain amino acids", "Ile", "Leu", and "Val" from `metabo_groups_custom`. Mind that you would naturally prefer to equally sepqrate the biomarkers over the two columns, which is why here we plot the first 22 in the left column and the second 22 in the second column. However, equal number of biomarkers per column is not a requirement. Finally, notice that by adding NA values you can add empty space wherever you want in order to visually separate the groups or to better align the two columns. 

@@ -1,0 +1,13 @@
+Package: forestplot
+Title: Create Custom Forestplots for NMR Metabolomics Data
+Version: 0.0.0.9000
+Author: Maria Kalimeri (Nightingale Health Ltd.), Qin Wang (Computational Medicine, Faculty of Medicine, University of Oulu)
+Maintainer: Maria Kalimeri <maria.kalimeri@nightingalehealth.com>
+Description: A function for single or double column forest plots for epidimiological analysis of NMR metabolomics biomarker data
+Depends:
+    R (>= 3.4.3),
+    tidyverse
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
