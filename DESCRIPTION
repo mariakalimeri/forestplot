@@ -1,4 +1,4 @@
-Package: forestplot
+Package: forestplotNMR
 Title: Create Custom Forestplots for NMR Metabolomics Data
 Version: 0.1.0
 Author: Maria Kalimeri (Nightingale Health Ltd.), Qin Wang (Computational Medicine, Faculty of Medicine, University of Oulu)

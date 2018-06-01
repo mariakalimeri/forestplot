@@ -32,7 +32,7 @@
 #' @examples
 #' bmr_all_grouped <- bmr_selected_grouping(bmr_grouping_choice = "serum_all")
 #'
-#' forestplot(beta=demo_beta,
+#' forestplot_nmr(beta=demo_beta,
 #'            se=demo_se,
 #'            pval=demo_pval,
 #'            biomarker_groups_as_list=bmr_all_grouped,
@@ -46,7 +46,7 @@
 #'            height = 12,
 #'            width = 9)
 
-forestplot <- function(beta,
+forestplot_nmr <- function(beta,
                        se,
                        pval,
                        biomarker_groups_as_list,

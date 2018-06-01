@@ -1,5 +1,5 @@
 ---
-title: "Forestplot Tutorial"
+title: "ForestplotNMR Tutorial"
 subtitle: "Visualizations for Epidemiological Analysis"
 author: | 
   | Maria Kalimeri, maria.kalimeri@nightingalehealth.com, Nightingale Health Ltd.
@@ -20,12 +20,12 @@ output:
 rm(list=ls.str())
 library(knitr)
 library(survival)
-library(forestplot)
+library(forestplotNMR)
 opts_chunk$set(tidy.opts=list(width.cutoff=50),tidy=TRUE)
 ```
 
 # Installation instructions 
-Forestplot is an under-development R package to plot associations of diseases and phenotypes in the form a forest plot (a.k.a. blobbogram). Specifically, it offers built-in naming and grouping features to assist visualizations of epidimiological analysis with NMR metabolomics quantified biomarkers (see section "Overview of NMR data"). The associations may be linear (linear regression), odds ratios (logistic regression) or hazard ratios (e.g. Cox Proportional hazards).
+ForestplotNMR is an R package to plot associations of diseases and phenotypes in the form a forest plot (a.k.a. blobbogram). Specifically, it offers built-in naming and grouping features to assist visualizations of epidimiological analysis with NMR metabolomics quantified biomarkers (see section "Overview of NMR data"). The associations may be linear (linear regression), odds ratios (logistic regression) or hazard ratios (e.g. Cox Proportional hazards).
 
 To install, first open an R session in the parent directory of the `forestplot/` folder. You will need the package `devtools`, if not already installed, install it by typing:
 
@@ -34,20 +34,20 @@ To install, first open an R session in the parent directory of the `forestplot/`
 install.packages("devtools")
 ```
 
-Then install and load `forestplot` by typing:
+Then install and load `forestplotNMR` by typing:
 
 ```{r, eval=FALSE}
 # (Make sure you are in the parent directory of forestplot)
 # Install 
-devtools::install(pkg = "forestplot")
+devtools::install(pkg = "forestplotNMR")
 # Load in session
-library(forestplot)
+library(forestplotNMR)
 ```
 
 Hopefully, dependencies will be installed automatically. If not let me know. (See also pdf manual for list of dependencies.)
 
 # Overview of NMR data
-The biomarker concentration data are often available in both tsv and xlsx formats. R can read both but in this tutorial we will focus on tsv format. We will be using the collection of the `tidyverse` packages which you need to have installed. Naturally, the previous step installed also `tidyverse` since it is a dependency for `forestplot`. If `tidyverse` is not installed, install it by typing `>install.packages("tidyverse")` and then load it by typing `>library(tidyverse)`.
+The biomarker concentration data are often available in both tsv and xlsx formats. R can read both but in this tutorial we will focus on tsv format. We will be using the collection of the `tidyverse` packages which you need to have installed. Naturally, the previous step installed also `tidyverse` since it is a dependency for `forestplotNMR`. If `tidyverse` is not installed, install it by typing `>install.packages("tidyverse")` and then load it by typing `>library(tidyverse)`.
 
 Below, we load two example tsv files in R and view the available biomarkers (the files can be found in the `demos` folder):
 
@@ -68,7 +68,7 @@ Print and inspect all the biomarker abbreviations
 ```{r, tidy=F}
 print(names(metabol_data_1))
 # You may also see their full names by printing the built-in dataset 
-head(forestplot::biomarkers)
+head(forestplotNMR::biomarkers)
 ```
 
 # Data analysis and visualization
@@ -224,7 +224,7 @@ pval_cohort2$abbrev <-
 ```
 
 ### Forest plotting (linear)
-Let's now attempt to plot all the biomarkers with the forestplot function. 
+Let's now attempt to plot all the biomarkers with the forestplot_nmr function. 
 
 ```{r, message=F, tidy=F}
 # We first merge the betas, se and pval dataframes
@@ -251,19 +251,19 @@ names(beta) <-
 # "serum_all", "edta_plasma_all", "short"). 
 bmr_all_grouped <- bmr_selected_grouping(bmr_grouping_choice = "serum_all")
 
-forestplot(beta=beta,
-           se=se,
-           pval=pval,
-           biomarker_groups_as_list=bmr_all_grouped,
-           filename='plot_linear_comparison.pdf',
-           plot_title="Linear associations to BMI",
-           is_log_odds_ratio=F,
-           xlabel="SD difference (95% CI)",
-           signif_cutoff=0.05,
-           legend_vars=names(beta)[2:3],
-           biomarker_name_option = 1,
-           height = 12, 
-           width = 9)
+forestplot_nmr(beta=beta,
+               se=se,
+               pval=pval,
+               biomarker_groups_as_list=bmr_all_grouped,
+               filename='plot_linear_comparison.pdf',
+               plot_title="Linear associations to BMI",
+               is_log_odds_ratio=F,
+               xlabel="SD difference (95% CI)",
+               signif_cutoff=0.05,
+               legend_vars=names(beta)[2:3],
+               biomarker_name_option = 1,
+               height = 12, 
+               width = 9)
 ```
 
 Notice that when only one cohort (or study) is plotted, the beta values are displayed 
@@ -272,19 +272,19 @@ on the right y-axis. For one-study plots the default color is black, but this is
 Notice also below that we are free to input other parameter specifications that will be fed into the `pdf` device used for the plot. In this case below I use "a4", which I highly recommend for the cases where all biomarkers are plotted. 
 
 ```{r, message=F, tidy=F}
-forestplot(beta=beta[,1:2],
-           se=se[,1:2],
-           pval=pval[,1:2],
-           biomarker_groups_as_list=bmr_all_grouped,
-           filename='plot_linear_cohort1.pdf',
-           plot_title="Linear associations to BMI",
-           is_log_odds_ratio=F,
-           xlabel="SD difference (95% CI)",
-           signif_cutoff=0.05,
-           biomarker_name_option = 1,
-           paper="a4",
-           height = 12, 
-           width = 9)
+forestplot_nmr(beta=beta[,1:2],
+               se=se[,1:2],
+               pval=pval[,1:2],
+               biomarker_groups_as_list=bmr_all_grouped,
+               filename='plot_linear_cohort1.pdf',
+               plot_title="Linear associations to BMI",
+               is_log_odds_ratio=F,
+               xlabel="SD difference (95% CI)",
+               signif_cutoff=0.05,
+               biomarker_name_option = 1,
+               paper="a4",
+               height = 12, 
+               width = 9)
 ```
 
 Let's now plot a smalled group of biomarkers and see how we can customize the looks of the output. We can build our own grouping but we will start by using the existing example in `bmr_selected_grouping()` function.
@@ -293,20 +293,20 @@ Let's now plot a smalled group of biomarkers and see how we can customize the lo
 # A grouping with smaller number of biomarkers
 bmr_all_grouped <- bmr_selected_grouping(bmr_grouping_choice = "example_short")
  
-forestplot(beta=beta,
-           se=se,
-           pval=pval,
-           biomarker_groups_as_list=bmr_all_grouped,
-           filename='plot_linear_cohort1_short.pdf',
-           plot_title="Linear associations to BMI",
-           is_log_odds_ratio=F,
-           xlabel="SD difference (95% CI)",
-           signif_cutoff=0.05,
-           legend_vars=names(beta)[2:3],
-           biomarker_name_option = 1,
-           paper="a4",
-           height = 12, 
-           width = 9)
+forestplot_nmr(beta=beta,
+               se=se,
+               pval=pval,
+               biomarker_groups_as_list=bmr_all_grouped,
+               filename='plot_linear_cohort1_short.pdf',
+               plot_title="Linear associations to BMI",
+               is_log_odds_ratio=F,
+               xlabel="SD difference (95% CI)",
+               signif_cutoff=0.05,
+               legend_vars=names(beta)[2:3],
+               biomarker_name_option = 1,
+               paper="a4",
+               height = 12, 
+               width = 9)
 ```
 
 If you inspect the last pdf file, you'll notice that the layout needs some further customizing. Let's start by moving the y-axis labels closer to the 
@@ -383,21 +383,21 @@ names(beta) <-
 # "serum_all", "edta_plasma_all", "short"). 
 bmr_all_grouped <- bmr_selected_grouping(bmr_grouping_choice = "serum_all")
 
-forestplot(beta=beta,
-           se=se,
-           pval=pval,
-           biomarker_groups_as_list=bmr_all_grouped,
-           filename='plot_logistic_cohort1.pdf',
-           plot_title="Odds ratios",
-           is_log_odds_ratio=T,
-           xlabel="SD-scaled odds ratios (95% CI)",
-           signif_cutoff=0.05,
-           plotpointshape = 23,
-           legend_vars=names(beta)[2],
-           biomarker_name_option = 1,
-           paper="a4",
-           height = 12, 
-           width = 9)
+forestplot_nmr(beta=beta,
+               se=se,
+               pval=pval,
+               biomarker_groups_as_list=bmr_all_grouped,
+               filename='plot_logistic_cohort1.pdf',
+               plot_title="Odds ratios",
+               is_log_odds_ratio=T,
+               xlabel="SD-scaled odds ratios (95% CI)",
+               signif_cutoff=0.05,
+               plotpointshape = 23,
+               legend_vars=names(beta)[2],
+               biomarker_name_option = 1,
+               paper="a4",
+               height = 12, 
+               width = 9)
 ```
 
 Below there is also an example with a small grouping that is built from scratch by the user. Here we will also make use of the `indices` parameter, a list of numeric vectors, that has either 1, 2 or 4 components corresponding to 1, 2 or 4 columns respectively and each containing the indices of the `biomarker_groups_as_list` to be plotted in each column.
@@ -417,19 +417,19 @@ metabo_groups_custom <- list("Branched-chain amino acids"=c("Ile", "Leu", "Val")
 
 
 
-forestplot(beta=beta,
-           se=se,
-           pval=pval,
-           biomarker_groups_as_list=metabo_groups_custom,
-           indices=list(c(1:22), c(23:44)),
-           filename='plot_logistic_cohort1_small.pdf',
-           plot_title="Odds ratios",
-           is_log_odds_ratio=T,
-           xlabel="SD-scaled odds ratios (95% CI)",
-           signif_cutoff=0.05,
-           biomarker_name_option = 1,
-           width=10,
-           height=5)
+forestplot_nmr(beta=beta,
+               se=se,
+               pval=pval,
+               biomarker_groups_as_list=metabo_groups_custom,
+               indices=list(c(1:22), c(23:44)),
+               filename='plot_logistic_cohort1_small.pdf',
+               plot_title="Odds ratios",
+               is_log_odds_ratio=T,
+               xlabel="SD-scaled odds ratios (95% CI)",
+               signif_cutoff=0.05,
+               biomarker_name_option = 1,
+               width=10,
+               height=5)
 ```
 
 So for example, in the `indices` parameter, indices 1 to 4 correspond to "Branched-chain amino acids", "Ile", "Leu", and "Val" from `metabo_groups_custom`. Mind that you would naturally prefer to equally sepqrate the biomarkers over the two columns, which is why here we plot the first 22 in the left column and the second 22 in the second column. However, equal number of biomarkers per column is not a requirement. Finally, notice that by adding NA values you can add empty space wherever you want in order to visually separate the groups or to better align the two columns. 
@@ -444,19 +444,19 @@ Finally, below there is a demo using the option 2 of biomarker_name_option. The 
 # "serum_all", "edta_plasma_all", "short"). 
 bmr_all_grouped <- bmr_selected_grouping(bmr_grouping_choice = "serum_all")
 
-forestplot(beta=beta,
-           se=se,
-           pval=pval,
-           biomarker_groups_as_list=bmr_all_grouped,
-           filename='plot_logistic_cohort1_option2_naming.pdf',
-           plot_title="Odds ratios",
-           is_log_odds_ratio=T,
-           xlabel="SD-scaled odds ratios (95% CI)",
-           signif_cutoff=0.05,
-           plotpointshape = 23,
-           legend_vars=names(beta)[2],
-           biomarker_name_option = 2,
-           paper="a4",
-           height = 12, 
-           width = 9)
+forestplot_nmr(beta=beta,
+               se=se,
+               pval=pval,
+               biomarker_groups_as_list=bmr_all_grouped,
+               filename='plot_logistic_cohort1_option2_naming.pdf',
+               plot_title="Odds ratios",
+               is_log_odds_ratio=T,
+               xlabel="SD-scaled odds ratios (95% CI)",
+               signif_cutoff=0.05,
+               plotpointshape = 23,
+               legend_vars=names(beta)[2],
+               biomarker_name_option = 2,
+               paper="a4",
+               height = 12, 
+               width = 9)
 ```

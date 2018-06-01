@@ -9,7 +9,7 @@
   \item{abbrev}{Biomarker abbreviation}
   \item{fullname}{Biomarker full name}
   \item{forest_plot_disp_name1}{Biomarker display name option 1 (for forest plot purposes)}
-  \item{forest_plot_categories}{Suggestive biomarker category (for forestplot purposes)}
+  \item{forest_plot_categories}{Suggestive biomarker category (for forest plot purposes)}
   \item{forest_plot_disp_name2}{Biomarker display name option 2 (for forest plot purposes)}
 }}
 \usage{
