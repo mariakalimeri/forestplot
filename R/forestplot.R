@@ -38,7 +38,7 @@
 #'            biomarker_groups_as_list=bmr_all_grouped,
 #'            filename='plot_linear_comparison.pdf',
 #'            plot_title="Linear associations to BMI",
-#'            is_log_odds_ratio=F,
+#'            is_log_odds_ratio=FALSE,
 #'            xlabel="SD difference (95% CI)",
 #'            signif_cutoff=0.05,
 #'            legend_vars=names(demo_beta)[2:3],
