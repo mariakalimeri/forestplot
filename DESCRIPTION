@@ -1,11 +1,11 @@
 Package: forestplot
 Title: Create Custom Forestplots for NMR Metabolomics Data
-Version: 0.0.0.9000
+Version: 0.1.0
 Author: Maria Kalimeri (Nightingale Health Ltd.), Qin Wang (Computational Medicine, Faculty of Medicine, University of Oulu)
 Maintainer: Maria Kalimeri <maria.kalimeri@nightingalehealth.com>
-Description: A function for single or double column forest plots for epidimiological analysis of NMR metabolomics biomarker data
+Description: Foreplot is a package for visualization of epidimiological analysis results. It's main function, forestplot, plots is a single or double column forest plots (a.k.a. blobbogram) associations of outcomes to NMR metabolomics biomarker data.
 Depends:
-    R (>= 3.4.3),
+    R (>= 3.5.0),
     tidyverse
 License: MIT + file LICENSE
 Encoding: UTF-8
