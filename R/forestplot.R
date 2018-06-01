@@ -24,6 +24,7 @@
 #' @param right_margin The margin from the right edge of the plot.
 #' @param cex_text The size of the y- and x-label. Legends and titles will be adjusted with respect to that.
 #' @param ylabelpos The distance of the ylabels from the plot. This parameter will most likley need to be adjusted in conjuction with the margins and the cex_tex, especially when the non-default layout is used.
+#' @param biomarker_name_option numeric (defaults to option 1), currently takes values 1 (for option 1) and 2 (for option 2). The main difference between the two options is how the names of the lipoprotein subclasses are displayed. For example, option 2 will display XXL-VLDL-TG \% for the ratio of triglycerides in XXL VLDL particles, whereas option 1 assumes that plotting will be done according to lipid type, e.g. all triglycerides plotted in the same subgroup, therefore it would only display "Extremely large VLDL" (under the category "Triglycerides in lipoproteins").
 #' @param ... Arguments to be passed to the \code{pdf} device, like \code{paper}, \code{width}, \code{height} e.t.c.
 #' @export
 #' @author Qin Wang, Maria Kalimeri
@@ -64,7 +65,13 @@ forestplot <- function(beta,
                        top_margin=2,
                        right_margin=3,
                        ylabelpos=NULL,
+                       biomarker_name_option=1,
                        ...){
+
+  # Run a check for the biomarker_name_option flag
+  if (!biomarker_name_option %in% c(1,2)){
+    stop("There are only two options for the biomarker_name_option parameter. Use either numeric 1 or 2")
+  }
   # beta, a matrix with rows as metabolites and columns as different outcomes.
   # se and pval same as beta
   # beta, se and pVal should be the same size matrix and have matching rownames and colnames
@@ -222,9 +229,16 @@ forestplot <- function(beta,
       # Get the display name of the biomarker
       row_idx <-
         match(rowname[bmridx], biomarkers$abbrev)
-      dispname <-
-        biomarkers[row_idx,] %>%
-        pull(., forest_plot_disp_name)
+      if (biomarker_name_option==1){
+        dispname <-
+          biomarkers[row_idx,] %>%
+          pull(., forest_plot_disp_name1)
+      } else {
+        dispname <-
+          biomarkers[row_idx,] %>%
+          pull(., forest_plot_disp_name2)
+      }
+
       # If the abbreviation doesn't exist, return the input
       na_idx <-
         is.na(dispname)

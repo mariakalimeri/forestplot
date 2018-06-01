@@ -8,13 +8,17 @@
 \describe{
   \item{abbrev}{Biomarker abbreviation}
   \item{fullname}{Biomarker full name}
-  \item{forest_plot_disp_name}{Biomarker display name (for forest plot purposes)}
+  \item{forest_plot_disp_name1}{Biomarker display name option 1 (for forest plot purposes)}
   \item{forest_plot_categories}{Suggestive biomarker category (for forestplot purposes)}
+  \item{forest_plot_disp_name2}{Biomarker display name option 2 (for forest plot purposes)}
 }}
 \usage{
 biomarkers
 }
 \description{
 A dataframe containing the abbreviations and spelled-out names of 228 NMR-quantified biomarkers.
+}
+\details{
+The main difference between forest_plot_disp_name1 and forest_plot_disp_name2 is how the names of the lipoprotein subclasses are displayed. For example, option 2 will display XXL-VLDL-TG % for the ratio of triglycerides in XXL VLDL particles, whereas option 1 assumes that plotting will be done according to lipid type, e.g. all triglycerides plotted in the same subgroup, therefore it would only display "Extremely large VLDL" (under the category "Triglycerides in lipoproteins").
 }
 \keyword{datasets}

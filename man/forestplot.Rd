@@ -9,7 +9,7 @@ forestplot(beta, se, pval, biomarker_groups_as_list, indices = NULL,
   xlabel = "beta", signif_cutoff = 0.05, plotcolors = NULL,
   plotpointshape = 21, legend_vars = NULL, cex_text = NULL,
   bottom_margin = 2, left_margin = NULL, top_margin = 2,
-  right_margin = 3, ylabelpos = NULL, ...)
+  right_margin = 3, ylabelpos = NULL, biomarker_name_option = 1, ...)
 }
 \arguments{
 \item{beta}{A data frame (either \code{tibble} or not) containing named columns in the following way: the first column must be the exact abbreviations of the NMR biomarkers (see built-in \code{biomarkers} dataset). This column must be named "abbrev". The rest of the columns, i.e. the study columns, must contain associations and they may be named with the name of the study, e.g. if the column contains the univariate associations of the biomarkers to BMI, the column may be named BMI. Use more than one study columns if you want to plot more than one studies in the same file. Avoid plotting more than 5 or 6 studies together, cause the result is not pretty and/or may be hard to read. It is important that the columns have all either linear associations or odds/hazard ratios. The reason is that odds/hazard ratios are plotted on a log axis, whereas linear associations not.}
@@ -49,6 +49,8 @@ forestplot(beta, se, pval, biomarker_groups_as_list, indices = NULL,
 \item{right_margin}{The margin from the right edge of the plot.}
 
 \item{ylabelpos}{The distance of the ylabels from the plot. This parameter will most likley need to be adjusted in conjuction with the margins and the cex_tex, especially when the non-default layout is used.}
+
+\item{biomarker_name_option}{numeric (defaults to option 1), currently takes values 1 (for option 1) and 2 (for option 2). The main difference between the two options is how the names of the lipoprotein subclasses are displayed. For example, option 2 will display XXL-VLDL-TG \% for the ratio of triglycerides in XXL VLDL particles, whereas option 1 assumes that plotting will be done according to lipid type, e.g. all triglycerides plotted in the same subgroup, therefore it would only display "Extremely large VLDL" (under the category "Triglycerides in lipoproteins").}
 
 \item{...}{Arguments to be passed to the \code{pdf} device, like \code{paper}, \code{width}, \code{height} e.t.c.}
 }

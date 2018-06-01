@@ -4,7 +4,7 @@ subtitle: "Visualizations for Epidemiological Analysis"
 author: | 
   | Maria Kalimeri, maria.kalimeri@nightingalehealth.com, Nightingale Health Ltd.
   | Qin Wang, qin.wang@computationalmedicine.fi, Computational Medicine, Faculty of Medicine, University of Oulu
-date: "Mar. 24, 2018"
+date: "Jun 1, 2018"
 output:
   pdf_document: default
   html_document:
@@ -261,6 +261,7 @@ forestplot(beta=beta,
            xlabel="SD difference (95% CI)",
            signif_cutoff=0.05,
            legend_vars=names(beta)[2:3],
+           biomarker_name_option = 1,
            height = 12, 
            width = 9)
 ```
@@ -280,6 +281,7 @@ forestplot(beta=beta[,1:2],
            is_log_odds_ratio=F,
            xlabel="SD difference (95% CI)",
            signif_cutoff=0.05,
+           biomarker_name_option = 1,
            paper="a4",
            height = 12, 
            width = 9)
@@ -301,6 +303,7 @@ forestplot(beta=beta,
            xlabel="SD difference (95% CI)",
            signif_cutoff=0.05,
            legend_vars=names(beta)[2:3],
+           biomarker_name_option = 1,
            paper="a4",
            height = 12, 
            width = 9)
@@ -391,6 +394,7 @@ forestplot(beta=beta,
            signif_cutoff=0.05,
            plotpointshape = 23,
            legend_vars=names(beta)[2],
+           biomarker_name_option = 1,
            paper="a4",
            height = 12, 
            width = 9)
@@ -423,8 +427,36 @@ forestplot(beta=beta,
            is_log_odds_ratio=T,
            xlabel="SD-scaled odds ratios (95% CI)",
            signif_cutoff=0.05,
+           biomarker_name_option = 1,
            width=10,
            height=5)
 ```
 
 So for example, in the `indices` parameter, indices 1 to 4 correspond to "Branched-chain amino acids", "Ile", "Leu", and "Val" from `metabo_groups_custom`. Mind that you would naturally prefer to equally sepqrate the biomarkers over the two columns, which is why here we plot the first 22 in the left column and the second 22 in the second column. However, equal number of biomarkers per column is not a requirement. Finally, notice that by adding NA values you can add empty space wherever you want in order to visually separate the groups or to better align the two columns. 
+
+Finally, below there is a demo using the option 2 of biomarker_name_option. The main difference between the two options of this parameter is how the names of the lipoprotein subclasses are displayed. For example, option 2 will display XXL-VLDL-TG % for the ratio of triglycerides in XXL VLDL particles, whereas option 1 assumes that plotting will be done according to lipid type, e.g. all triglycerides plotted in the same subgroup (as in the previous examples), therefore it would only display "Extremely large VLDL" (under the category "Triglycerides in lipoproteins"). 
+
+```{r, message=F, tidy=F}
+
+# Create a grouping (in this case we just use one of the built in options)
+# Function bmr_selected_grouping() takes one argument "bmr_grouping_choice",
+# which must be one of the following four strings: "onepage_forestplot",
+# "serum_all", "edta_plasma_all", "short"). 
+bmr_all_grouped <- bmr_selected_grouping(bmr_grouping_choice = "serum_all")
+
+forestplot(beta=beta,
+           se=se,
+           pval=pval,
+           biomarker_groups_as_list=bmr_all_grouped,
+           filename='plot_logistic_cohort1_option2_naming.pdf',
+           plot_title="Odds ratios",
+           is_log_odds_ratio=T,
+           xlabel="SD-scaled odds ratios (95% CI)",
+           signif_cutoff=0.05,
+           plotpointshape = 23,
+           legend_vars=names(beta)[2],
+           biomarker_name_option = 2,
+           paper="a4",
+           height = 12, 
+           width = 9)
+```
