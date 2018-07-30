@@ -18,8 +18,12 @@ Authors:
 * Type
 
 ```shell
-R CMD INSTALL forestplotNMR
+R CMD INSTALL forestplot
 ```
+
+(Mind that the name of the package directory may be in principle different than
+`forestplot` or `forestplotNMR`. E.g., if you downloaded the repository it may
+be `forestplot-master`. Substitute above accordingly.)
 
 The demos subdirectory contains a tutorial in both html and pdf format that will
 get you started.
