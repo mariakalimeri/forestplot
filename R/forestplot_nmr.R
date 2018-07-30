@@ -117,17 +117,26 @@ forestplot_nmr <- function(beta,
   }
   names(result) <- colnames(beta)[2:ncol(beta)]
 
-  xleft <-
-    result %>%
-    sapply(function(x) x[,c("2.5 %", "97.5 %")]) %>%
-    sapply(function(x) min(x, na.rm = T)) %>%
-    min()
+  # Double sapply throws warnings if result has length 1, i.e. plotting 1 cohort
+  # Solution, add if/else.
+  xyrange <- result %>%
+    sapply(function(x) x[,c("2.5 %", "97.5 %")])
+  if (length(result) > 1){
+    xleft <-
+      xyrange %>%
+      sapply(function(x) min(x, na.rm = T)) %>%
+      min()
 
-  xright <-
-    result %>%
-    sapply(function(x) x[,c("2.5 %", "97.5 %")]) %>%
-    sapply(function(x) max(x, na.rm = T)) %>%
-    max()
+    xright <-
+      xyrange %>%
+      sapply(function(x) max(x, na.rm = T)) %>%
+      max()
+
+  } else if (length(result)==1){
+    xleft <- min(xyrange, na.rm = T)
+
+    xright <- max(xyrange, na.rm = T)
+  }
 
   xrange=c(xleft, xright)
 
