@@ -84,15 +84,16 @@ add_bmr_group_names <- function(beta, se, pval, biomarker_groups_as_list){
       rbind(., pval[match(biomarker_groups_as_list[[i]], pval$abbrev),])
   }
 
-  # A trick in order to add the names of the groups in the NA rows
-  # Trick is needed cause in principle the biomarker_groups_as_list may have
-  # spare NAs (NAs are used as trick to add white space in the plot)
-  first_bmr_of_each_group <-
-    sapply(biomarker_groups_as_list, function(x) x[1]) %>%
-    unname()
-
-  rows_for_group_names <-
-    match(first_bmr_of_each_group, beta_grouped$abbrev)-1
+  # Add the names of the groups in the rows that have NAs. Caution: In case of
+  # subsequent NA rows, keep only the last row as the title one.
+  rows_for_group_names <- NULL
+  for (rowno in 1:nrow(beta_grouped)){
+    # This is a titlename row only if the subsequent row's abbrev is not NA
+    if (is.na(beta_grouped$abbrev[rowno]) &&
+        !is.na(beta_grouped$abbrev[rowno+1])){
+        rows_for_group_names <- c(rows_for_group_names, rowno)
+    }
+  }
 
   beta_grouped$abbrev[rows_for_group_names] <-
     se_grouped$abbrev[rows_for_group_names] <-
