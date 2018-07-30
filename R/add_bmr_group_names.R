@@ -59,16 +59,22 @@ add_bmr_group_names <- function(beta, se, pval, biomarker_groups_as_list){
   # Extra check that the abbreviations given are in the standard format
   # # Use built-in biomarkers dataset for the check
   if (setdiff(beta$abbrev, biomarkers$abbrev) %>% length() != 0){
-    stop(paste("All abbreviations must be a subset of biomarkers$abbrev! Currently the abbreviations in the beta dataframe contain the following non standard names:",
+    stop(paste("All abbreviations must be a subset of biomarkers$abbrev!
+               Currently the abbreviations in the beta dataframe contain the
+               following non standard names:",
                paste(setdiff(beta$abbrev, biomarkers$abbrev), collapse = ", ")))
   }
   if (setdiff(se$abbrev, biomarkers$abbrev) %>% length() != 0){
-    stop(paste("All abbreviations must be a subset of biomarkers$abbrev! Currently the abbreviations in the se dataframe contain the following non standard names:",
+    stop(paste("All abbreviations must be a subset of biomarkers$abbrev!
+               Currently the abbreviations in the se dataframe contain the
+               following non standard names:",
                setdiff(se$abbrev, biomarkers$abbrev),
                "Please correct, so that all abbreviations are a subset of biomarkers$abbrev"))
   }
   if (setdiff(pval$abbrev, biomarkers$abbrev) %>% length() != 0){
-    stop(paste("All abbreviations must be a subset of biomarkers$abbrev! Currently the abbreviations in the pval dataframe contain the following non standard names:",
+    stop(paste("All abbreviations must be a subset of biomarkers$abbrev!
+               Currently the abbreviations in the pval dataframe contain the
+               following non standard names:",
                setdiff(pval$abbrev, biomarkers$abbrev),
                "Please correct, so that all abbreviations are a subset of biomarkers$abbrev"))
   }
@@ -82,7 +88,7 @@ add_bmr_group_names <- function(beta, se, pval, biomarker_groups_as_list){
     pval[0,]
 
   # A row that will be added above every group of biomarkers
-  title_row_of_na <- beta[0,]
+  title_row_of_na <- beta[0,] # init
   title_row_of_na[1,] <- rep(NA, ncol(beta))
 
   # Loop over all biomarker groups and create the new orgered and grouped dataframes
