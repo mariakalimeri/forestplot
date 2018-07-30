@@ -12,6 +12,23 @@
 
 add_bmr_group_names <- function(beta, se, pval, biomarker_groups_as_list){
 
+  # Check that all beta, se and pval have a column named abbrev
+  if (names(beta)[1]!="abbrev"){
+    stop("The first column/variable of beta must be named 'abbrev' and must
+          contain the exact abbreviations of the NMR biomarkers (see built-in
+          biomarkers dataset).")
+  }
+  if (names(se)[1]!="abbrev"){
+    stop("The first column/variable of se must be named 'abbrev' and must
+          contain the exact abbreviations of the NMR biomarkers (see built-in
+         biomarkers dataset).")
+  }
+  if (names(pval)[1]!="abbrev"){
+    stop("The first column/variable of pval must be named 'abbrev' and must
+          contain the exact abbreviations of the NMR biomarkers (see built-in
+         biomarkers dataset).")
+  }
+
   # Checks that beta, se and pval dataframes have same structure/dims
   # rows
   if (nrow(beta) != nrow(se) | nrow(beta) != nrow(pval) | nrow(se) != nrow(pval)){
