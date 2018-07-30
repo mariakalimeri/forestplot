@@ -119,26 +119,43 @@ forestplot_nmr <- function(beta,
 
   # Double sapply throws warnings if result has length 1, i.e. plotting 1 cohort
   # Solution, add if/else.
-  xyrange <- result %>%
+  errorcols <- result %>%
     sapply(function(x) x[,c("2.5 %", "97.5 %")])
   if (length(result) > 1){
     xleft <-
-      xyrange %>%
+      errorcols %>%
       sapply(function(x) min(x, na.rm = T)) %>%
       min()
 
     xright <-
-      xyrange %>%
+      errorcols %>%
       sapply(function(x) max(x, na.rm = T)) %>%
       max()
 
   } else if (length(result)==1){
-    xleft <- min(xyrange, na.rm = T)
+    xleft <- min(errorcols, na.rm = T)
 
-    xright <- max(xyrange, na.rm = T)
+    xright <- max(errorcols, na.rm = T)
   }
 
   xrange=c(xleft, xright)
+  # Check for rare case where all plotted biomarkers having a significant effect
+  # in the same direction and therefore the null case (0 in linear and 1 in log)
+  # is missing from the plot
+  if (is_log_odds_ratio) {
+    if (xrange[1] > 1) {
+      xrange <- c(1-(1/xrange[2]), xrange[2])
+    } else if (xrange[2] < 1) {
+      xrange <- c(xrange[1], 1+(1/xrange[1]))
+    }
+  } else {
+    if (xrange[1] > 0) {
+      xrange <- c(0-xrange[2], xrange[2])
+    } else if (xrange[2] < 0) {
+      xrange <- c(xrange[1], 0+xrange[1])
+    }
+  }
+
 
   # Plot parameters
   # Divide the plot in different groups
