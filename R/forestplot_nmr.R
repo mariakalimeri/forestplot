@@ -47,26 +47,26 @@
 #'            width = 9)
 
 forestplot_nmr <- function(beta,
-                       se,
-                       pval,
-                       biomarker_groups_as_list,
-                       indices=NULL,
-                       filename='forest_plot.pdf',
-                       plot_title=NULL,
-                       is_log_odds_ratio=F,
-                       xlabel="beta",
-                       signif_cutoff=0.05,
-                       plotcolors=NULL,
-                       plotpointshape=21,
-                       legend_vars=NULL,
-                       cex_text=NULL,
-                       bottom_margin=2,
-                       left_margin=NULL,
-                       top_margin=2,
-                       right_margin=3,
-                       ylabelpos=NULL,
-                       biomarker_name_option=1,
-                       ...){
+                           se,
+                           pval,
+                           biomarker_groups_as_list,
+                           indices=NULL,
+                           filename='forest_plot.pdf',
+                           plot_title=NULL,
+                           is_log_odds_ratio=F,
+                           xlabel="beta",
+                           signif_cutoff=0.05,
+                           plotcolors=NULL,
+                           plotpointshape=21,
+                           legend_vars=NULL,
+                           cex_text=NULL,
+                           bottom_margin=2,
+                           left_margin=NULL,
+                           top_margin=2,
+                           right_margin=3,
+                           ylabelpos=NULL,
+                           biomarker_name_option=1,
+                           ...){
 
   # Run a check for the biomarker_name_option flag
   if (!biomarker_name_option %in% c(1,2)){
@@ -120,23 +120,17 @@ forestplot_nmr <- function(beta,
   # Double sapply throws warnings if result has length 1, i.e. plotting 1 cohort
   # Solution, add if/else.
   errorcols <- result %>%
-    sapply(function(x) x[,c("2.5 %", "97.5 %")])
-  if (length(result) > 1){
-    xleft <-
-      errorcols %>%
-      sapply(function(x) min(x, na.rm = T)) %>%
-      min()
+    lapply(function(x) x[,c("2.5 %", "97.5 %")])
+  xleft <-
+    errorcols %>%
+    sapply(function(x) min(x, na.rm = T)) %>%
+    min()
 
-    xright <-
-      errorcols %>%
-      sapply(function(x) max(x, na.rm = T)) %>%
-      max()
+  xright <-
+    errorcols %>%
+    sapply(function(x) max(x, na.rm = T)) %>%
+    max()
 
-  } else if (length(result)==1){
-    xleft <- min(errorcols, na.rm = T)
-
-    xright <- max(errorcols, na.rm = T)
-  }
 
   xrange=c(xleft, xright)
   # Check for rare case where all plotted biomarkers having a significant effect
