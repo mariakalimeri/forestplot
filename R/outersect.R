@@ -20,6 +20,6 @@
 # # [1] "down" "fire"
 
 outersect <- function(x, y) {
-  sort(c(x[!x%in%y],
-         y[!y%in%x]))
+  c(x[!x%in%y],
+    y[!y%in%x])
 }
