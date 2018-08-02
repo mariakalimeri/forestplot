@@ -75,40 +75,40 @@ add_bmr_group_names <-
     if (outersect(colnames(se), colnames(pval)) %>% length() != 0) {
       stop("beta, se, and pval must have same number of columns and same colnames")
     }
-    # Extra check that the abbreviations given are in the standard format
-    # # Use built-in biomarkers dataset for the check
-    if (setdiff(beta$abbrev, biomarkers$abbrev) %>% length() != 0) {
-      stop(
-        paste(
-          "All abbreviations must be a subset of biomarkers$abbrev!
-          Currently the abbreviations in the beta dataframe contain the
-          following non standard names:",
-          paste(setdiff(beta$abbrev, biomarkers$abbrev), collapse = ", ")
-        )
-      )
-    }
-    if (setdiff(se$abbrev, biomarkers$abbrev) %>% length() != 0) {
-      stop(
-        paste(
-          "All abbreviations must be a subset of biomarkers$abbrev!
-          Currently the abbreviations in the se dataframe contain the
-          following non standard names:",
-          setdiff(se$abbrev, biomarkers$abbrev),
-          "Please correct, so that all abbreviations are a subset of biomarkers$abbrev"
-        )
-      )
-    }
-    if (setdiff(pval$abbrev, biomarkers$abbrev) %>% length() != 0) {
-      stop(
-        paste(
-          "All abbreviations must be a subset of biomarkers$abbrev!
-          Currently the abbreviations in the pval dataframe contain the
-          following non standard names:",
-          setdiff(pval$abbrev, biomarkers$abbrev),
-          "Please correct, so that all abbreviations are a subset of biomarkers$abbrev"
-        )
-      )
-    }
+    # # Extra check that the abbreviations given are in the standard format
+    # # # Use built-in biomarkers dataset for the check
+    # if (setdiff(beta$abbrev, biomarkers$abbrev) %>% length() != 0) {
+    #   stop(
+    #     paste(
+    #       "All abbreviations must be a subset of biomarkers$abbrev!
+    #       Currently the abbreviations in the beta dataframe contain the
+    #       following non standard names:",
+    #       paste(setdiff(beta$abbrev, biomarkers$abbrev), collapse = ", ")
+    #     )
+    #   )
+    # }
+    # if (setdiff(se$abbrev, biomarkers$abbrev) %>% length() != 0) {
+    #   stop(
+    #     paste(
+    #       "All abbreviations must be a subset of biomarkers$abbrev!
+    #       Currently the abbreviations in the se dataframe contain the
+    #       following non standard names:",
+    #       setdiff(se$abbrev, biomarkers$abbrev),
+    #       "Please correct, so that all abbreviations are a subset of biomarkers$abbrev"
+    #     )
+    #   )
+    # }
+    # if (setdiff(pval$abbrev, biomarkers$abbrev) %>% length() != 0) {
+    #   stop(
+    #     paste(
+    #       "All abbreviations must be a subset of biomarkers$abbrev!
+    #       Currently the abbreviations in the pval dataframe contain the
+    #       following non standard names:",
+    #       setdiff(pval$abbrev, biomarkers$abbrev),
+    #       "Please correct, so that all abbreviations are a subset of biomarkers$abbrev"
+    #     )
+    #   )
+    # }
 
     # # Check the biomarker_groups_as_list element by element and keep only the ones
     # # that are also in the abbrev column of the beta, se and pval
