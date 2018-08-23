@@ -169,6 +169,15 @@ forestplot_nmr <- function(beta,
     max_page <- 2
     max_plot_col <- 2
     # Specific biomarkers will be plotted in one page and one column
+  } else if (is.null(indices) && 260 > nrow(beta) && nrow(beta) >= 150){
+    fr <- nrow(beta)
+    indices <-
+      list(first_indices=1:round(fr/4),
+           second_indices=(round(fr/4)+1):round(fr*2/4),
+           third_indices=(round(fr*2/4)+1):round(fr*3/4),
+           forth_indices=(round(fr*3/4)+1):fr)
+    max_page <- 2
+    max_plot_col <- 2
   } else if (is.null(indices) && nrow(beta) < 150){
     indices <-
       list(first_indices=1:nrow(beta))
@@ -178,6 +187,7 @@ forestplot_nmr <- function(beta,
     max_page <- ifelse(length(indices)==4, yes = 2, no = 1)
     max_plot_col <- length(indices)
   }
+
   # Aesthetics
   if (no_of_studies==1 && is.null(plotcolors)){
     plotcolors <-  "black"
