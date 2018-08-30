@@ -8,16 +8,23 @@ bmr_selected_grouping(bmr_grouping_choice = c("serum_all", "edta_plasma_all",
   "example_short"))
 }
 \arguments{
-\item{bmr_grouping_choice}{A string. Must be one of the following 3: "serum_all", "edta_plasma_all", "example_short".}
+\item{bmr_grouping_choice}{A string. Must be one of the following 3:
+"serum_all", "edta_plasma_all", "example_short".}
 }
 \value{
 A named list of selected biomarkers in a predefined order
 }
 \description{
-This function generates ordered, grouped subsets of selected biomarkers in the form of named lists.
+This function generates ordered, grouped subsets of selected biomarkers in
+the form of named lists.
 }
 \details{
-The function currently generates 3 different groupings. The need for these specific groupings and orderings came from the need to generate different versions of forest plots. The categories "serum_all" and "edta_plasma_all" are expected to be the most useful as they group all the blood biomarkers for either serum (228 biomarkers) or plasma (225 biomarkers) samples. The other category "example_short" is meant as an example case.
+The function currently generates 3 different groupings. The need for these
+specific groupings and orderings came from the need to generate different
+versions of forest plots. The categories "serum_all" and "edta_plasma_all"
+are expected to be the most useful as they group all the blood biomarkers
+for either serum (228 biomarkers) or plasma (225 biomarkers) samples. The
+other category "example_short" is meant as an example case.
 }
 \examples{
 # Get the grouped biomarkers

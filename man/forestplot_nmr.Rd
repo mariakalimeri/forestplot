@@ -12,35 +12,78 @@ forestplot_nmr(beta, se, pval, biomarker_groups_as_list, indices = NULL,
   right_margin = 3, ylabelpos = NULL, biomarker_name_option = 1, ...)
 }
 \arguments{
-\item{beta}{A data frame (either \code{tibble} or not) containing named columns in the following way: the first column must be the exact abbreviations of the NMR biomarkers (see built-in \code{biomarkers} dataset). This column must be named "abbrev". The rest of the columns, i.e. the study columns, must contain associations and they may be named with the name of the study, e.g. if the column contains the univariate associations of the biomarkers to BMI, the column may be named BMI. Use more than one study columns if you want to plot more than one studies in the same file. Avoid plotting more than 5 or 6 studies together, cause the result is not pretty and/or may be hard to read. It is important that the columns have all either linear associations or odds/hazard ratios. The reason is that odds/hazard ratios are plotted on a log axis, whereas linear associations not.}
+\item{beta}{A data frame (either \code{tibble} or not) containing named
+columns in the following way: the first column must be the exact
+abbreviations of the NMR biomarkers (see built-in \code{biomarkers} dataset).
+This column must be named "abbrev". The rest of the columns, i.e. the study
+columns, must contain associations and they may be named with the name of the
+study, e.g. if the column contains the univariate associations of the
+biomarkers to BMI, the column may be named BMI. Use more than one study
+columns if you want to plot more than one studies in the same file. Avoid
+plotting more than 5 or 6 studies together, cause the result is not pretty
+and/or may be hard to read. It is important that the columns have all either
+linear associations or odds/hazard ratios. The reason is that odds/hazard
+ratios are plotted on a log axis, whereas linear associations not.}
 
-\item{se}{A data frame (either \code{tibble} or not) in the same format as beta parameter. Keep the same order of columns and preferably the same order of rows (although the latter is not necessary).}
+\item{se}{A data frame (either \code{tibble} or not) in the same format as
+beta parameter. Keep the same order of columns and preferably the same order
+of rows (although the latter is not necessary).}
 
-\item{pval}{A data frame (either \code{tibble} or not) in the same format as beta and se parameters. Keep the same order of columns and preferably the same order of rows (although the latter is not necessary).}
+\item{pval}{A data frame (either \code{tibble} or not) in the same format as
+beta and se parameters. Keep the same order of columns and preferably the
+same order of rows (although the latter is not necessary).}
 
-\item{biomarker_groups_as_list}{A named list of character vactors containing the groups of biomarkers to plot (see examples). The category names, i.e. the names of the components of the list, can be anything. The actual character vectors must contain the exact biomarker abbreviations. See Results.tsv or Results.xlsx files or the built-in dataset biomarkers$abbrev.}
+\item{biomarker_groups_as_list}{A named list of character vactors containing
+the groups of biomarkers to plot (see examples). The category names, i.e.
+the names of the components of the list, can be anything. The actual
+character vectors must contain the exact biomarker abbreviations. See
+Results.tsv or Results.xlsx files or the built-in dataset biomarkers$abbrev.}
 
-\item{indices}{Either NULL or a list of numeric vectors, that has either 1, 2 or 4 components containing the rows from beta that will eventually be plotted. It basically allows to customize the layout of the forestplot. If NULL and biomarker_groups_as_list has all serum or plasma biomarkers then a 2-column, 2-page forestplot is printed, containing all biomarkers. If a list with 1 component, e.g. list(c(1:30)), then a 1-column, 1-page forestplot is printed, containing all the biomarkers from beta dataframe until row number tail(indices[[1]], 1), e.g. tail(list(c(1:30))[[1]], 1)=30. If a list with 2 components, then a 2-column, 1 page forestplot is printed. If a list with 4 components, then a 2-column, 2-page forestplot is printed.}
+\item{indices}{Either NULL or a list of numeric vectors, that has either 1, 2
+or 4 components containing the rows from beta that will eventually be plotted.
+It basically allows to customize the layout of the forestplot. If NULL and
+biomarker_groups_as_list has all serum or plasma biomarkers then a 2-column,
+2-page forestplot is printed, containing all biomarkers. If a list with 1
+component, e.g. list(c(1:30)), then a 1-column, 1-page forestplot is printed,
+containing all the biomarkers from beta dataframe until row number
+tail(indices[[1]], 1), e.g. tail(list(c(1:30))[[1]], 1)=30. If a list with
+2 components, then a 2-column, 1 page forestplot is printed. If a list with
+4 components, then a 2-column, 2-page forestplot is printed.}
 
-\item{filename}{A character with the name of the pdf file that will contain the plot. Defaults to 'forest_plot.pdf'}
+\item{filename}{A character with the name of the pdf file that will contain
+the plot. Defaults to 'forest_plot.pdf'}
 
-\item{plot_title}{A character (defaults to NULL) with a title for the plot. If NULL no title.}
+\item{plot_title}{A character (defaults to NULL) with a title for the plot.
+If NULL no title.}
 
-\item{is_log_odds_ratio}{logical (defaults to F) specifying whether the associations are linear or not. If TRUE, provide the log odds ratio as the function will exponentiate the betas internally. For TRUE a log scale is be used.}
+\item{is_log_odds_ratio}{logical (defaults to F) specifying whether the
+associations are linear or not. If TRUE, provide the log odds ratio as the
+function will exponentiate the betas internally. For TRUE a log scale is be
+used.}
 
 \item{xlabel}{A character with the xlab to display. Defaults to "beta".}
 
-\item{signif_cutoff}{Numeric specifying the cutoff for statistical significance. E.g. often a cutoff of 0.05 is used. Associations with values larger than that will be plotted with an empty circular point.}
+\item{signif_cutoff}{Numeric specifying the cutoff for statistical
+significance. E.g. often a cutoff of 0.05 is used. Associations with values
+larger than that will be plotted with an empty circular point.}
 
-\item{plotcolors}{A vector of characters specifying the color of the plotted points. Defaults to NULL in which case, if only one study, black is used. If more than one studies, the script generates a default palette.}
+\item{plotcolors}{A vector of characters specifying the color of the plotted
+points. Defaults to NULL in which case, if only one study, black is used. If
+more than one studies, the script generates a default palette.}
 
-\item{plotpointshape}{An integer or vector of integers (default 21) signifying the shape of points used for the plot. The values must be one of 21,22,23,24 or 25 in order for the insignificant cases to be displayed as empty shapes.}
+\item{plotpointshape}{An integer or vector of integers (default 21)
+signifying the shape of points used for the plot. The values must be one of
+21,22,23,24 or 25 in order for the insignificant cases to be displayed as
+empty shapes.}
 
-\item{legend_vars}{A vector of characters specifying the legend names for when more than one studies are plotted.}
+\item{legend_vars}{A vector of characters specifying the legend names for
+when more than one studies are plotted.}
 
-\item{cex_text}{The size of the y- and x-label. Legends and titles will be adjusted with respect to that.}
+\item{cex_text}{The size of the y- and x-label. Legends and titles will be
+adjusted with respect to that.}
 
-\item{bottom_margin}{The margin from the bottom of the plot (the forestplot will be plotted in a A4 paper).}
+\item{bottom_margin}{The margin from the bottom of the plot (the forestplot
+will be plotted in a A4 paper).}
 
 \item{left_margin}{The margin from the left edge of the plot.}
 
@@ -48,20 +91,43 @@ forestplot_nmr(beta, se, pval, biomarker_groups_as_list, indices = NULL,
 
 \item{right_margin}{The margin from the right edge of the plot.}
 
-\item{ylabelpos}{The distance of the ylabels from the plot. This parameter will most likley need to be adjusted in conjuction with the margins and the cex_tex, especially when the non-default layout is used.}
+\item{ylabelpos}{The distance of the ylabels from the plot. This parameter
+will most likley need to be adjusted in conjuction with the margins and the
+cex_tex, especially when the non-default layout is used.}
 
-\item{biomarker_name_option}{numeric (defaults to option 1), currently takes values 1 (for option 1) and 2 (for option 2). The main difference between the two options is how the names of the lipoprotein subclasses are displayed. For example, option 2 will display XXL-VLDL-TG \% for the ratio of triglycerides in XXL VLDL particles, whereas option 1 assumes that plotting will be done according to lipid type, e.g. all triglycerides plotted in the same subgroup, therefore it would only display "Extremely large VLDL" (under the category "Triglycerides in lipoproteins").}
+\item{biomarker_name_option}{numeric (defaults to option 1), currently takes
+values 1 (for option 1) and 2 (for option 2). The main difference between the
+two options is how the names of the lipoprotein subclasses are displayed. For
+example, option 2 will display XXL-VLDL-TG \% for the ratio of triglycerides
+in XXL VLDL particles, whereas option 1 assumes that plotting will be done
+according to lipid type, e.g. all triglycerides plotted in the same subgroup,
+therefore it would only display "Extremely large VLDL" (under the category
+"Triglycerides in lipoproteins").}
 
-\item{...}{Arguments to be passed to the \code{pdf} device, like \code{paper}, \code{width}, \code{height} e.t.c.}
+\item{...}{Arguments to be passed to the \code{pdf} device, like \code{paper},
+\code{width}, \code{height} e.t.c.}
 }
 \description{
-This function reads three dataframes, a biomarker association dataframe, its corresponding standard error dataframe and its corresponding p-value dataframe and plots a custom-size and layout, 1- or 2- column, forest plot.
+This function reads three dataframes, a biomarker association dataframe, its
+corresponding standard error dataframe and its corresponding p-value
+dataframe and plots a custom-size and layout, 1- or 2- column, forest plot.
 }
 \details{
-The parameters \code{biomarker_groups_as_list} and \code{indices} allow for customization of the layout in 1- or 2- column, 1- or 2- page forestplots. Specifically, if the indices is specified (as opposed to the default NULL) it must be a list of numeric vectors, that has either 1, 2 or 4 components, which allow for a 1-column/1-page, 2-column/1-page or 2-column/2-page forestplot, respectively (see examples). The list essentially defines the rows from beta that will be plotted. By adding NA in selected positions of the biomarker_groups_as_list while increasing the number of indices, accordingly, one can add extra white space between biomarker of biomarker categories.
+The parameters \code{biomarker_groups_as_list} and \code{indices} allow for
+customization of the layout in 1- or 2- column, 1- or 2- page forestplots.
+Specifically, if the indices is specified (as opposed to the default NULL)
+it must be a list of numeric vectors, that has either 1, 2 or 4 components,
+which allow for a 1-column/1-page, 2-column/1-page or 2-column/2-page
+forestplot, respectively (see examples). The list essentially defines the
+rows from beta that will be plotted. By adding NA in selected positions of
+the biomarker_groups_as_list while increasing the number of indices,
+accordingly, one can add extra white space between biomarker of biomarker
+categories.
 }
 \note{
-It is important that the columns have all either linear associations or odds/hazard ratios. The reason is that odds/hazard ratios are plotted on a log axis, whereas linear associations not.
+It is important that the columns have all either linear associations or
+odds/hazard ratios. The reason is that odds/hazard ratios are plotted on a
+log axis, whereas linear associations not.
 }
 \examples{
 bmr_all_grouped <- bmr_selected_grouping(bmr_grouping_choice = "serum_all")
