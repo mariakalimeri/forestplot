@@ -95,6 +95,10 @@
 #' odds/hazard ratios. The reason is that odds/hazard ratios are plotted on a
 #' log axis, whereas linear associations not.
 #' @examples
+#' # Attach the package to easily access built-in datasets
+#' library(forestplotNMR)
+#'
+#' #
 #' bmr_all_grouped <- bmr_selected_grouping(bmr_grouping_choice = "serum_all")
 #'
 #' forestplot_nmr(beta=demo_beta,
@@ -272,7 +276,7 @@ forestplot_nmr <- function(beta,
     plotcolors <-  "black"
   } else if (no_of_studies > 1 && is.null(plotcolors)) {
     plotcolors <-
-      colorRampPalette(c(fpcolors[1], fpcolors[2], fpcolors[3]),
+      colorRampPalette(c(forestplotNMR::fpcolors[1], forestplotNMR::fpcolors[2], forestplotNMR::fpcolors[3]),
                        interpolate = "linear",
                        space = "rgb")(no_of_studies)
   } else if (no_of_studies > 1 && length(plotcolors) < no_of_studies) {
@@ -280,7 +284,7 @@ forestplot_nmr <- function(beta,
                   "Will use built-in colors.")
     )
     plotcolors <-
-      colorRampPalette(c(fpcolors[1], fpcolors[2], fpcolors[3]),
+      colorRampPalette(c(forestplotNMR::fpcolors[1], forestplotNMR::fpcolors[2], forestplotNMR::fpcolors[3]),
                        interpolate = "linear",
                        space = "rgb")(no_of_studies)
   }
@@ -353,14 +357,14 @@ forestplot_nmr <- function(beta,
       })
       # Get the display name of the biomarker
       row_idx <-
-        match(rowname[bmridx], biomarkers$abbrev)
+        match(rowname[bmridx], forestplotNMR::biomarkers$abbrev)
       if (biomarker_name_option == 1) {
         dispname <-
-          biomarkers[row_idx, ] %>%
+          forestplotNMR::biomarkers[row_idx, ] %>%
           pull(., forest_plot_disp_name1)
       } else {
         dispname <-
-          biomarkers[row_idx, ] %>%
+          forestplotNMR::biomarkers[row_idx, ] %>%
           pull(., forest_plot_disp_name2)
       }
 
