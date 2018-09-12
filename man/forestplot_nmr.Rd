@@ -130,6 +130,10 @@ odds/hazard ratios. The reason is that odds/hazard ratios are plotted on a
 log axis, whereas linear associations not.
 }
 \examples{
+# Attach the package to easily access built-in datasets
+library(forestplotNMR)
+
+#
 bmr_all_grouped <- bmr_selected_grouping(bmr_grouping_choice = "serum_all")
 
 forestplot_nmr(beta=demo_beta,

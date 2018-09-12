@@ -462,13 +462,13 @@ forestplot_nmr <- function(beta,
               if (no_of_studies == 1) {
                 axis(
                   side = 4,
-                  line = -1,
+                  line = 0,
                   at = yv0[k],
                   labels = sprintf("%.2f", round(estimates[k, j], 2)),
                   cex.axis = cex_text - 0.1,
                   las = 1,
                   tick = F,
-                  hadj = 0
+                  hadj = 1
                 )
 
               }
