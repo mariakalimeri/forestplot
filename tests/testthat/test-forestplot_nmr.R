@@ -1,7 +1,7 @@
 context("forestplot_nmr")
 
 
-test_that("plots tests case 1", {
+test_that("plot is generated - case 1", {
   bmr_all_grouped <- bmr_selected_grouping(bmr_grouping_choice = "serum_all")
 
   forestplot_nmr(beta=demo_beta,
@@ -24,7 +24,7 @@ test_that("plots tests case 1", {
 })
 
 
-test_that("plots tests case 2", {
+test_that("plot is generated - case 2", {
   abbrev <- c("LDL-C", "HDL-C", "Serum-C")
   b <- data.frame(
     abbrev = abbrev,
@@ -43,12 +43,18 @@ test_that("plots tests case 2", {
   )
   bm_groups <- list("Clinical" = abbrev, "CRASH" = c("NOT_IN_DATA", "LDL-C"))
 
-  forestplot_nmr(beta = b,
-                 se = s,
-                 pval = p,
-                 biomarker_groups_as_list = bm_groups,
-                 filename = "TEMP2_plot_pkgtesting.pdf")
-
+  expect_warning(
+    forestplot_nmr(beta = b,
+                   se = s,
+                   pval = p,
+                   biomarker_groups_as_list = bm_groups,
+                   filename = "TEMP2_plot_pkgtesting.pdf"),
+    paste(
+      "The following biomarkers in 'biomarker_groups_as_list' are missing",
+      "from the beta data frame and will be ignored in the forestplot:",
+      "NOT_IN_DATA"
+    )
+  )
   expect_true(
     "TEMP2_plot_pkgtesting.pdf" %in% list.files()
   )

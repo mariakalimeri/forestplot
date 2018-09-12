@@ -140,8 +140,8 @@ add_bmr_group_names <-
     if (length(biomarkers_not_in_beta) > 0) {
       warning(
         paste(
-          "The following biomarkers in 'biomarker_groups_as_list' are missing
-          from the beta data frame and will be ignored in the forestplot:\n",
+          "The following biomarkers in 'biomarker_groups_as_list' are missing",
+          "from the beta data frame and will be ignored in the forestplot:",
           paste(biomarkers_not_in_beta, collapse = ", ")
         )
       )
